@@ -12,7 +12,7 @@ VARIANTS = {
     "nahi": ["nahin", "nai", "nahii", "nhi", "nai"],
     "bahut": ["bohot", "bahot", "bhot", "boht", "bohut"],
     "kya": ["kia", "kyaa"],
-    "hai": ["hain", "he", "h"],
+    "hai": ["hain", "h"],
     "mujhe": ["mujhko", "muje"],
     "bakwas": ["bakwaas", "bakwass", "bkwas"],
     "yaar": ["yar", "yaaar", "yar"],
