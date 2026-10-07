@@ -16,7 +16,7 @@ LEXICON_WEIGHT = 0.3  # share of the lexicon score in the final emotion blend
 
 
 def load_corpus(path=DATA):
-    with open(path, encoding="utf-8") as f:
+    with open(path, encoding="utf-8-sig") as f:
         rows = list(csv.DictReader(f))
     return [r["text"] for r in rows], [r["emotion"] for r in rows], [int(r["sarcastic"]) for r in rows]
 
@@ -69,3 +69,4 @@ class HinglishAnalyzer:
         emotion = max(probs, key=probs.get)
         return {"normalized": norm, "emotion": emotion, "emotion_probs": probs,
                 "sarcasm_prob": sarc, "sarcastic": sarc >= 0.5}
+
