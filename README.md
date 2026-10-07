@@ -57,5 +57,8 @@ Example session:
 ```
 hinglish_nlp/  normalize.py  lexicon.py  model.py  evaluate.py  cli.py
 data/          hinglish_corpus.csv
+config.json    model and evaluation settings
+PROMPT.md      problem statement and requirements
 tests/
 ```
+

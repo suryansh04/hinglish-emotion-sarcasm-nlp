@@ -1,5 +1,6 @@
 ﻿"""Emotion + sarcasm model for Hinglish text."""
 import csv
+import json
 from pathlib import Path
 
 import numpy as np
@@ -12,7 +13,8 @@ from .normalize import normalize
 
 DATA = Path(__file__).resolve().parent.parent / "data" / "hinglish_corpus.csv"
 EMOTIONS = list(EMOTION_LEXICON)
-LEXICON_WEIGHT = 0.3  # share of the lexicon score in the final emotion blend
+CONFIG = json.loads((DATA.parent.parent / "config.json").read_text(encoding="utf-8"))
+LEXICON_WEIGHT = CONFIG["lexicon_weight"]  # share of the lexicon score in the final emotion blend
 
 
 def load_corpus(path=DATA):
@@ -39,10 +41,10 @@ def sarcasm_features(norm_text):
 
 class HinglishAnalyzer:
     def __init__(self):
-        self.vec = TfidfVectorizer(analyzer="char_wb", ngram_range=(2, 4), sublinear_tf=True)
-        self.word_vec = TfidfVectorizer(ngram_range=(1, 2), sublinear_tf=True)
-        self.emotion_clf = LogisticRegression(C=10, max_iter=1000)
-        self.sarcasm_clf = LogisticRegression(C=5, max_iter=1000, class_weight="balanced")
+        self.vec = TfidfVectorizer(analyzer="char_wb", ngram_range=tuple(CONFIG["char_ngram_range"]), sublinear_tf=True)
+        self.word_vec = TfidfVectorizer(ngram_range=tuple(CONFIG["word_ngram_range"]), sublinear_tf=True)
+        self.emotion_clf = LogisticRegression(**CONFIG["emotion_model"])
+        self.sarcasm_clf = LogisticRegression(class_weight="balanced", **CONFIG["sarcasm_model"])
 
     def _text_matrix(self, norm, fit=False):
         if fit:
@@ -68,5 +70,7 @@ class HinglishAnalyzer:
         sarc = float(self.sarcasm_clf.predict_proba(self._sarcasm_matrix(X, [norm]))[0][1])
         emotion = max(probs, key=probs.get)
         return {"normalized": norm, "emotion": emotion, "emotion_probs": probs,
-                "sarcasm_prob": sarc, "sarcastic": sarc >= 0.5}
+                "sarcasm_prob": sarc, "sarcastic": sarc >= CONFIG["sarcasm_threshold"]}
+
+
 
