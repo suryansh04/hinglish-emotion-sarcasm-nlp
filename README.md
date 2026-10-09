@@ -26,6 +26,7 @@ Emotions: `joy`, `anger`, `sadness`, `fear`.
 
 ## Setup & usage
 ```bash
+cd hinglish-emotion-sarcasm-nlp   # run all commands from the project root
 pip install -r requirements.txt
 
 python -m hinglish_nlp                       # interactive mode
@@ -61,4 +62,5 @@ config.json    model and evaluation settings
 PROMPT.md      problem statement and requirements
 tests/
 ```
+
 
