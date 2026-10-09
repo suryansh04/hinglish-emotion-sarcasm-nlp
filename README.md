@@ -32,6 +32,7 @@ pip install -r requirements.txt
 python -m hinglish_nlp                       # interactive mode
 python -m hinglish_nlp "mujhe bahut dar lag raha hai"   # one-shot
 python -m hinglish_nlp --evaluate            # 5-fold cross-validation
+python -m hinglish_nlp --verify "waah bahut accha, late aaye ho"   # Gemini cross-check
 python -m pytest tests                       # unit tests
 ```
 
@@ -41,6 +42,16 @@ Example session:
   anger / sadness probabilities …
   => emotion: SADNESS | tone: SARCASTIC
 ```
+
+## Gemini verification (optional)
+With `--verify`, each prediction is sent to Google's Gemini API, which independently
+judges the emotion and sarcasm and says whether it agrees with the local model.
+Set your key first (never commit it); the model name is in `config.json`:
+```powershell
+$env:GEMINI_API_KEY = "your-key"     # Linux/macOS: export GEMINI_API_KEY=...
+python -m hinglish_nlp --verify      # interactive mode with verification
+```
+Without a key, or if the API is unreachable, the local result is still printed and a short notice is shown.
 
 ## Results (5-fold stratified CV, 68 hand-written sentences)
 | Task    | Accuracy | F1 |
@@ -62,5 +73,6 @@ config.json    model and evaluation settings
 PROMPT.md      problem statement and requirements
 tests/
 ```
+
 
 

@@ -18,9 +18,23 @@ def show(r):
         print("  note: surface wording may be positive, but the intended emotion is the negative one.")
 
 
+def show_verification(text, result):
+    from .gemini_verifier import GeminiError, verify
+    try:
+        v = verify(text, result)
+    except GeminiError as e:
+        print(f"  gemini     : unavailable ({e})")
+        return
+    verdict = "AGREES" if v.get("agrees") else "DISAGREES"
+    print(f"  gemini     : {verdict} - emotion={v.get('emotion')}, sarcastic={v.get('sarcastic')}")
+    print(f"  reason     : {v.get('reason')}")
+
+
 def main():
     ap = argparse.ArgumentParser(description="Hinglish emotion & sarcasm analyser")
     ap.add_argument("text", nargs="*", help="analyse this text once and exit")
+    ap.add_argument("--verify", action="store_true",
+                    help="cross-check each result with Gemini (needs GEMINI_API_KEY)")
     ap.add_argument("--evaluate", action="store_true", help="run cross-validation and exit")
     args = ap.parse_args()
     if args.evaluate:
@@ -28,7 +42,12 @@ def main():
         return run()
     analyzer = build()
     if args.text:
-        return show(analyzer.predict(" ".join(args.text)))
+        text = " ".join(args.text)
+        result = analyzer.predict(text)
+        show(result)
+        if args.verify:
+            show_verification(text, result)
+        return
     print("Hinglish Emotion & Sarcasm Analyzer  (type 'quit' to exit)")
     while True:
         try:
@@ -38,7 +57,10 @@ def main():
         if text.lower() in {"quit", "exit", "q"}:
             break
         if text:
-            show(analyzer.predict(text))
+            result = analyzer.predict(text)
+            show(result)
+            if args.verify:
+                show_verification(text, result)
 
 
 if __name__ == "__main__":
